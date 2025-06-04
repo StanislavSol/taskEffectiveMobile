@@ -5,14 +5,13 @@
 ## Требования:
 
  - PHP ^8.1
- - Node.js & npm
  - Sqlite for local
 
 ## Локальная установка проекта
 
 ```shell
-git clone git@github.com:StanislavSol/taskByEM.git
-cd taskByEM
+git clone git@github.com:StanislavSol/taskEffectiveMobile.git
+cd taskEffectiveMobile
 make install
 ```
 
