@@ -16,14 +16,12 @@ class TaskController extends Controller
             $tasks = Task::all();
             
             return response()->json([
-                'success' => true,
                 'message' => 'Tasks retrieved successfully.',
-                'data' => $tasks
-            ]);
+                'tasks' => $tasks
+            ], 201);
             
         } catch (\Exception $e) {
             return response()->json([
-                'success' => false,
                 'message' => 'Failed to retrieve tasks.',
                 'error' => $e->getMessage()
             ], 500);
@@ -42,21 +40,18 @@ class TaskController extends Controller
             $task = Task::create($data);
 
             return response()->json([
-                'success' => true,
-                'message' => 'Task created successfully.',
-                'data' => $task
+                'message' => 'Tasks create successfully.',
+                'task' => $task
             ], 201);
 
         } catch (ValidationException $e) {
             return response()->json([
-                'success' => false,
                 'message' => 'Validation failed',
                 'errors' => $e->errors()
             ], 422);
             
         } catch (\Exception $e) {
             return response()->json([
-                'success' => false,
                 'message' => 'Failed to create task.',
                 'error' => $e->getMessage()
             ], 500);
@@ -69,20 +64,17 @@ class TaskController extends Controller
             $task = Task::findOrFail($id);
             
             return response()->json([
-                'success' => true,
                 'message' => 'Task retrieved successfully.',
-                'data' => $task
-            ]);
+                'task' => $task
+            ], 201);
             
         } catch (ModelNotFoundException $e) {
             return response()->json([
-                'success' => false,
                 'message' => 'Task not found.'
             ], 404);
             
         } catch (\Exception $e) {
             return response()->json([
-                'success' => false,
                 'message' => 'Failed to retrieve task.',
                 'error' => $e->getMessage()
             ], 500);
@@ -103,27 +95,23 @@ class TaskController extends Controller
             $task->update($data);
 
             return response()->json([
-                'success' => true,
-                'message' => 'Task updated successfully.',
-                'data' => $task
-            ]);
+                'message' => 'Tasks update successfully.',
+                'task' => $task
+            ], 201);
             
         } catch (ModelNotFoundException $e) {
             return response()->json([
-                'success' => false,
                 'message' => 'Task not found.'
             ], 404);
             
         } catch (ValidationException $e) {
             return response()->json([
-                'success' => false,
                 'message' => 'Validation failed',
                 'errors' => $e->errors()
             ], 422);
             
         } catch (\Exception $e) {
             return response()->json([
-                'success' => false,
                 'message' => 'Failed to update task.',
                 'error' => $e->getMessage()
             ], 500);
@@ -137,19 +125,16 @@ class TaskController extends Controller
             $task->delete();
 
             return response()->json([
-                'success' => true,
-                'message' => 'Task deleted successfully.'
-            ]);
+                'message' => 'Tasks delete successfully.'
+            ], 201);
             
         } catch (ModelNotFoundException $e) {
             return response()->json([
-                'success' => false,
                 'message' => 'Task not found.'
             ], 404);
             
         } catch (\Exception $e) {
             return response()->json([
-                'success' => false,
                 'message' => 'Failed to delete task.',
                 'error' => $e->getMessage()
             ], 500);
