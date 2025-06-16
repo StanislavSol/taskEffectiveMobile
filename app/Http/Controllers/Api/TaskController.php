@@ -10,9 +10,6 @@ use Illuminate\Validation\ValidationException;
 
 class TaskController extends Controller
 {
-    /**
-     * Получить все задачи
-     */
     public function index()
     {
         try {
@@ -33,9 +30,6 @@ class TaskController extends Controller
         }
     }
 
-    /**
-     * Создать новую задачу
-     */
     public function store(Request $request)
     {
         try {
@@ -69,9 +63,6 @@ class TaskController extends Controller
         }
     }
 
-    /**
-     * Показать конкретную задачу
-     */
     public function show($id)
     {
         try {
@@ -98,9 +89,6 @@ class TaskController extends Controller
         }
     }
 
-    /**
-     * Обновить задачу
-     */
     public function update(Request $request, $id)
     {
         try {
@@ -142,9 +130,6 @@ class TaskController extends Controller
         }
     }
 
-    /**
-     * Удалить задачу
-     */
     public function destroy($id)
     {
         try {
