@@ -5,67 +5,169 @@ namespace App\Http\Controllers\Api;
 use App\Models\Task;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Validation\ValidationException;
 
 class TaskController extends Controller
 {
+    /**
+     * Получить все задачи
+     */
     public function index()
     {
-        $tasks = Task::all();
-        return response()->json([
-            'message' => 'Tasks retrieved successfully.',
-            'tasks' => $tasks
-        ], 201);
+        try {
+            $tasks = Task::all();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Tasks retrieved successfully.',
+                'data' => $tasks
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve tasks.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
+    /**
+     * Создать новую задачу
+     */
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'title' => "required|unique:tasks",
-            'status' => "string",
-            'description' => "max:100"
-        ]);
+        try {
+            $data = $request->validate([
+                'title' => "required|unique:tasks",
+                'status' => "string",
+                'description' => "max:100"
+            ]);
 
-        $task = Task::create($data);
+            $task = Task::create($data);
 
-        return response()->json([
-            'message' => 'Tasks create successfully.',
-            'task' => $task->toArray()
-        ], 201);
+            return response()->json([
+                'success' => true,
+                'message' => 'Task created successfully.',
+                'data' => $task
+            ], 201);
 
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to create task.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
-    public function show(Task $task)
+    /**
+     * Показать конкретную задачу
+     */
+    public function show($id)
     {
-        return response()->json([
-            'message' => 'Task retrieved successfully.',
-            'task' => $task->toArray()
-        ], 201);
+        try {
+            $task = Task::findOrFail($id);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Task retrieved successfully.',
+                'data' => $task
+            ]);
+            
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Task not found.'
+            ], 404);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve task.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
-    public function update(Request $request, Task $task)
+    /**
+     * Обновить задачу
+     */
+    public function update(Request $request, $id)
     {
-        $data = $request->validate([
-            'title' => "unique:tasks,title,{$task->id}",
-            'status' => "string",
-            'description' => "max:100"
-        ]);
+        try {
+            $task = Task::findOrFail($id);
+            
+            $data = $request->validate([
+                'title' => "unique:tasks,title,{$id}",
+                'status' => "string",
+                'description' => "max:100"
+            ]);
 
-        $task->fill($data);
-        $task->save();
+            $task->update($data);
 
-        return response()->json([
-            'message' => 'Tasks update successfully.',
-            'task' => $task->toArray()
-        ], 201);
-
+            return response()->json([
+                'success' => true,
+                'message' => 'Task updated successfully.',
+                'data' => $task
+            ]);
+            
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Task not found.'
+            ], 404);
+            
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update task.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
-    public function destroy(Task $task)
+    /**
+     * Удалить задачу
+     */
+    public function destroy($id)
     {
-        $task->delete();
+        try {
+            $task = Task::findOrFail($id);
+            $task->delete();
 
-        return response()->json([
-            'message' => 'Tasks delete successfully.',
-        ], 201);
+            return response()->json([
+                'success' => true,
+                'message' => 'Task deleted successfully.'
+            ]);
+            
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Task not found.'
+            ], 404);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete task.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }
